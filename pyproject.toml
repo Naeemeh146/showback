@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-spend-guard"
+version = "0.1.0"
+description = "Hard budget enforcement for AI agent spend: per-call cost ledger, pre-flight and mid-run budget guards, tool-call attribution."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Naeemeh Yadollahpour" }]
+keywords = ["llm", "agents", "cost", "budget", "finops", "observability", "guardrails"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.optional-dependencies]
+litellm = ["litellm>=1.0"]
+yaml = ["pyyaml>=6"]
+dev = ["pytest>=8", "ruff>=0.8"]
+
+[project.urls]
+Homepage = "https://github.com/Naeemeh146/agent-spend-guard"
+Repository = "https://github.com/Naeemeh146/agent-spend-guard"
+Issues = "https://github.com/Naeemeh146/agent-spend-guard/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]

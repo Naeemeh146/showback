@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+
+# Testing / linting
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Distribution / packaging
+*.tar.gz
+*.whl
+
+# Editors
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Example outputs (generated at runtime, never committed)
+examples/output/
+
+# Secrets — never commit tokens, keys, or credentials
+.env
+.env.*
+*.pem
+*.key
