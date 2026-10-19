@@ -1,0 +1,22 @@
+# If you use agent-spend-guard in your work, please cite it as below.
+cff-version: 1.2.0
+title: agent-spend-guard
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Yadollahpour
+    given-names: Naeemeh
+repository-code: "https://github.com/Naeemeh146/agent-spend-guard"
+url: "https://github.com/Naeemeh146/agent-spend-guard"
+license: MIT
+version: 0.1.0
+date-released: 2026-10-19
+keywords:
+  - ai-agents
+  - llm
+  - cost-tracking
+  - budget-enforcement
+  - finops
+  - observability
+  - guardrails
+  - python
