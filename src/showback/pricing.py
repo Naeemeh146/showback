@@ -67,14 +67,12 @@ class PricingTable:
     def from_yaml_file(cls, path: str | Path) -> PricingTable:
         """Load a pricing table from a YAML file.
 
-        Needs the ``yaml`` extra: ``pip install agent-spend-guard[yaml]``.
+        Needs the ``yaml`` extra: ``pip install showback[yaml]``.
         """
         try:
             import yaml
         except ImportError as exc:
-            raise ImportError(
-                "YAML pricing files need PyYAML: pip install agent-spend-guard[yaml]"
-            ) from exc
+            raise ImportError("YAML pricing files need PyYAML: pip install showback[yaml]") from exc
         raw: dict[str, Any] = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         return cls.from_dict(raw)
 

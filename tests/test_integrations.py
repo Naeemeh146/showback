@@ -12,7 +12,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from agent_spend_guard import BudgetExceeded, BudgetGuard, SpendTracker
+from showback import BudgetExceeded, BudgetGuard, SpendTracker
 
 
 def _block_litellm(monkeypatch):
@@ -40,15 +40,15 @@ def _response(prompt_tokens=1000, completion_tokens=500, as_dict=False):
 
 def test_missing_litellm_raises_helpful_error(monkeypatch):
     _block_litellm(monkeypatch)
-    from agent_spend_guard.integrations.litellm import SpendGuardCallback
+    from showback.integrations.litellm import SpendGuardCallback
 
-    with pytest.raises(ImportError, match="pip install agent-spend-guard\\[litellm\\]"):
+    with pytest.raises(ImportError, match="pip install showback\\[litellm\\]"):
         SpendGuardCallback(SpendTracker())
 
 
 def test_callback_records_call(monkeypatch):
     _fake_litellm(monkeypatch)
-    from agent_spend_guard.integrations.litellm import SpendGuardCallback
+    from showback.integrations.litellm import SpendGuardCallback
 
     tracker = SpendTracker()
     cb = SpendGuardCallback(tracker, tags={"agent": "researcher"})
@@ -66,7 +66,7 @@ def test_callback_records_call(monkeypatch):
 
 def test_callback_handles_dict_usage(monkeypatch):
     _fake_litellm(monkeypatch)
-    from agent_spend_guard.integrations.litellm import SpendGuardCallback
+    from showback.integrations.litellm import SpendGuardCallback
 
     tracker = SpendTracker()
     cb = SpendGuardCallback(tracker)
@@ -76,7 +76,7 @@ def test_callback_handles_dict_usage(monkeypatch):
 
 def test_callback_enforces_guard_mid_run(monkeypatch):
     _fake_litellm(monkeypatch)
-    from agent_spend_guard.integrations.litellm import SpendGuardCallback
+    from showback.integrations.litellm import SpendGuardCallback
 
     tracker = SpendTracker()
     guard = BudgetGuard(0.0001, tracker)  # less than one call costs
@@ -87,7 +87,7 @@ def test_callback_enforces_guard_mid_run(monkeypatch):
 
 def test_tag_from_kwargs(monkeypatch):
     _fake_litellm(monkeypatch)
-    from agent_spend_guard.integrations.litellm import SpendGuardCallback
+    from showback.integrations.litellm import SpendGuardCallback
 
     tracker = SpendTracker()
     cb = SpendGuardCallback(

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from agent_spend_guard import DEFAULT_PRICES, PricingTable, UnknownModelError
+from showback import DEFAULT_PRICES, PricingTable, UnknownModelError
 
 
 def test_default_table_cost_math():

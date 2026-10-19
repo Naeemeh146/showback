@@ -6,8 +6,8 @@ import functools
 from collections.abc import Callable
 from typing import Any, TypeVar
 
-from agent_spend_guard.pricing import PricingTable
-from agent_spend_guard.tracker import SpendTracker
+from showback.pricing import PricingTable
+from showback.tracker import SpendTracker
 
 F = TypeVar("F", bound=Callable[..., Any])
 

@@ -2,7 +2,7 @@ import threading
 
 import pytest
 
-from agent_spend_guard import PricingTable, SpendTracker
+from showback import PricingTable, SpendTracker
 
 
 def test_record_llm_computes_cost():

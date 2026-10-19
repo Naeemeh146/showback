@@ -1,6 +1,6 @@
 import pytest
 
-from agent_spend_guard import BudgetExceeded, BudgetGuard, SpendTracker
+from showback import BudgetExceeded, BudgetGuard, SpendTracker
 
 
 def _tracker_with_spend(amount_calls: int = 1) -> SpendTracker:

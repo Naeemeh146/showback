@@ -7,7 +7,7 @@ import json
 from collections.abc import Iterable
 from pathlib import Path
 
-from agent_spend_guard.tracker import LedgerEntry, SpendTracker
+from showback.tracker import LedgerEntry, SpendTracker
 
 EntriesLike = Iterable[LedgerEntry] | SpendTracker
 

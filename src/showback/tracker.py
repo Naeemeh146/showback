@@ -7,7 +7,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-from agent_spend_guard.pricing import PricingTable
+from showback.pricing import PricingTable
 
 
 @dataclass(frozen=True)

@@ -1,16 +1,20 @@
-# agent-spend-guard
+# showback
 
-[![PyPI version](https://img.shields.io/pypi/v/agent-spend-guard)](https://pypi.org/project/agent-spend-guard/)
-[![Python versions](https://img.shields.io/pypi/pyversions/agent-spend-guard)](https://pypi.org/project/agent-spend-guard/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Naeemeh146/agent-spend-guard/blob/main/LICENSE)
+[![PyPI version](https://img.shields.io/pypi/v/showback)](https://pypi.org/project/showback/)
+[![Python versions](https://img.shields.io/pypi/pyversions/showback)](https://pypi.org/project/showback/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Naeemeh146/showback/blob/main/LICENSE)
 
-Hard budget enforcement for AI agent spend. Every observability tool logs what your
-agents *already spent* — `agent-spend-guard` is the layer that **stops the run** when a
-budget is breached: refuse to start an over-budget run (pre-flight), and abort it
-mid-flight between steps. Fully offline, zero required dependencies.
+Hard budgets for AI agents, with the receipts.
+
+Every observability tool logs what your agents *already spent* — `showback` is the
+layer that **stops the run** when a budget is breached, and hands finance the
+itemized bill: refuse to start an over-budget run (pre-flight), abort it mid-flight
+between steps, and attribute every dollar to agent, task, team, or customer tags —
+exportable as JSON/CSV for showback and chargeback. Fully offline, zero required
+dependencies.
 
 ```python
-from agent_spend_guard import BudgetExceeded, BudgetGuard, SpendTracker
+from showback import BudgetExceeded, BudgetGuard, SpendTracker
 
 tracker = SpendTracker()  # local, append-only cost ledger
 guard = BudgetGuard(0.50, tracker)  # hard $0.50 cap
@@ -53,9 +57,9 @@ task, team, or customer so the budget means something. That's this library.
 ## Install
 
 ```bash
-pip install agent-spend-guard            # core: zero required dependencies
-pip install "agent-spend-guard[litellm]" # LiteLLM callback integration
-pip install "agent-spend-guard[yaml]"    # YAML pricing files (JSON works out of the box)
+pip install showback            # core: zero required dependencies
+pip install "showback[litellm]" # LiteLLM callback integration
+pip install "showback[yaml]"    # YAML pricing files (JSON works out of the box)
 ```
 
 ## Architecture
@@ -84,7 +88,7 @@ turn the ledger into reports. Integrations feed real calls into the tracker.
 ## Pricing
 
 ```python
-from agent_spend_guard import PricingTable
+from showback import PricingTable
 
 table = PricingTable.from_json_file("pricing.json")  # or .from_yaml_file(...)
 table.set_price("my-fine-tune", input_per_1m=3.0, output_per_1m=12.0)
@@ -100,8 +104,8 @@ is registered; `openai/gpt-4o`-style prefixed names resolve to their base model.
 
 ```python
 import litellm
-from agent_spend_guard import BudgetGuard, SpendTracker
-from agent_spend_guard.integrations.litellm import SpendGuardCallback
+from showback import BudgetGuard, SpendTracker
+from showback.integrations.litellm import SpendGuardCallback
 
 tracker = SpendTracker()
 guard = BudgetGuard(2.00, tracker, match_tags={"agent": "researcher"})
@@ -118,7 +122,7 @@ each one, so a multi-step loop aborts as soon as the cap is hit.
 | **LiteLLM** | Gateway-level budget caps per key/team, blocks requests at the proxy | Nothing inside your agent loop; no per-task attribution |
 | **Langfuse / LangSmith** | Excellent per-trace cost logging and dashboards | Logging only — no hard caps, no mid-run abort |
 | **Portkey / Helicone-style gateways** | Spend visibility, some with request blocking | Proxy-bound; your in-process agent code is on its own |
-| **agent-spend-guard** | In-process hard caps: pre-flight + mid-run abort, per-tag attribution | Not a dashboard, not a proxy — pairs with the tools above |
+| **showback** | In-process hard caps: pre-flight + mid-run abort, per-tag attribution | Not a dashboard, not a proxy — pairs with the tools above |
 
 Use them together: a gateway cap as the outer fence, this library as the inner guard
 that stops *this specific run* before it burns *this specific task's* budget.

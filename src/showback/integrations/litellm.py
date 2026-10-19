@@ -1,12 +1,12 @@
-"""LiteLLM integration (optional extra: ``pip install agent-spend-guard[litellm]``).
+"""LiteLLM integration (optional extra: ``pip install showback[litellm]``).
 
 Drop :class:`SpendGuardCallback` into ``litellm.success_callback`` and every
 completed call is recorded in your ledger — with the budget guard tripping
 mid-run if a cap is breached::
 
     import litellm
-    from agent_spend_guard import BudgetGuard, SpendTracker
-    from agent_spend_guard.integrations.litellm import SpendGuardCallback
+    from showback import BudgetGuard, SpendTracker
+    from showback.integrations.litellm import SpendGuardCallback
 
     tracker = SpendTracker()
     guard = BudgetGuard(1.00, tracker)
@@ -18,8 +18,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from agent_spend_guard.guard import BudgetGuard
-from agent_spend_guard.tracker import SpendTracker
+from showback.guard import BudgetGuard
+from showback.tracker import SpendTracker
 
 
 def _usage_value(usage: Any, *names: str) -> int:
@@ -54,7 +54,7 @@ class SpendGuardCallback:
         except ImportError as exc:
             raise ImportError(
                 "The LiteLLM integration requires the 'litellm' package: "
-                "pip install agent-spend-guard[litellm]"
+                "pip install showback[litellm]"
             ) from exc
         self.tracker = tracker if tracker is not None else SpendTracker()
         self.guard = guard

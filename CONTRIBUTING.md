@@ -1,4 +1,4 @@
-# Contributing to agent-spend-guard
+# Contributing to showback
 
 Thanks for helping build the enforcement layer agent spend is missing. Bug reports,
 pricing corrections, and new integrations are all welcome.
@@ -6,8 +6,8 @@ pricing corrections, and new integrations are all welcome.
 ## Setup
 
 ```bash
-git clone https://github.com/Naeemeh146/agent-spend-guard.git
-cd agent-spend-guard
+git clone https://github.com/Naeemeh146/showback.git
+cd showback
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
@@ -23,9 +23,9 @@ python examples/agent_loop.py   # the example must abort mid-run and print its l
 
 ## Ground rules
 
-- **Core stays dependency-free.** The `agent_spend_guard` package itself must never
+- **Core stays dependency-free.** The `showback` package itself must never
   gain a required runtime dependency. Integrations live under
-  `src/agent_spend_guard/integrations/` and are optional extras; importing the top-level
+  `src/showback/integrations/` and are optional extras; importing the top-level
   package must never import them.
 - **Fully offline.** No network calls in the library or the test suite. Tests that need
   a third-party package must fake it (see `tests/test_integrations.py`).
