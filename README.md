@@ -218,9 +218,9 @@ python examples/agent_loop.py
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Bug reports and PRs welcome — especially
+See [CONTRIBUTING.md](https://github.com/Naeemeh146/showback/blob/main/CONTRIBUTING.md). Bug reports and PRs welcome — especially
 pricing corrections and new integrations.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Copyright 2026 Naeemeh Yadollahpour.
+MIT — see [LICENSE](https://github.com/Naeemeh146/showback/blob/main/LICENSE). Copyright 2026 Naeemeh Yadollahpour.
