@@ -45,6 +45,13 @@ class BudgetGuard:
 
     Pass ``match_tags`` to scope the budget to a slice of a shared tracker,
     e.g. one guard per ``task_id`` while several tasks share one ledger.
+
+    Vocabulary (after BATS, Liu et al., arXiv:2511.17006):
+
+    * **BUDGET** — the hard upper limit in USD this guard enforces. Crossing
+      it aborts the run.
+    * **COST** — realized spend recorded in the ledger. The guard trips when
+      COST reaches the BUDGET.
     """
 
     def __init__(
@@ -72,6 +79,31 @@ class BudgetGuard:
     def remaining_usd(self) -> float:
         """Budget left before the cap trips. Never negative."""
         return max(0.0, round(self.budget_usd - self.spent_usd, 6))
+
+    @property
+    def spent_ratio(self) -> float:
+        """Fraction of the BUDGET consumed by realized COST, capped at 1.0.
+
+        This is the continuous signal the BATS budget tracker feeds back to
+        the agent (BATS, Liu et al., arXiv:2511.17006): 0.0 on a fresh run,
+        1.0 once the hard upper limit is reached or crossed.
+        """
+        return min(1.0, self.spent_usd / self.budget_usd)
+
+    def budget_prompt_snippet(self) -> str:
+        """One-line budget signal to inject into the agent's prompt each step.
+
+        A lightweight, always-on reminder of the remaining budget, in the
+        spirit of the BATS budget tracker (BATS, Liu et al.,
+        arXiv:2511.17006): a continuous signal that nudges the agent to
+        prefer cheaper actions as COST approaches the BUDGET.
+        """
+        remaining = self.remaining_usd
+        percent = int(remaining / self.budget_usd * 100)
+        return (
+            f"Remaining budget: ${remaining:.4f} of ${self.budget_usd:.4f} "
+            f"({percent}% left). Spend carefully; prefer cheaper actions."
+        )
 
     def check(self) -> None:
         """Raise :class:`BudgetExceeded` if the cap is reached. Call between steps."""

@@ -7,7 +7,16 @@ no network calls, no required dependencies.
 """
 
 from showback.attribution import export_csv, export_json, summarize_by_tag
+from showback.cascade import (
+    CallFn,
+    CascadeResult,
+    CascadeRouter,
+    Scorer,
+    keyword_scorer,
+    nonempty_scorer,
+)
 from showback.guard import BudgetExceeded, BudgetGuard
+from showback.loops import LoopDetected, LoopDetector, loop_to_budget_exceeded
 from showback.pricing import DEFAULT_PRICES, PricingTable, UnknownModelError
 from showback.tracker import LedgerEntry, SpendTracker
 
@@ -17,12 +26,21 @@ __all__ = [
     "DEFAULT_PRICES",
     "BudgetExceeded",
     "BudgetGuard",
+    "CallFn",
+    "CascadeResult",
+    "CascadeRouter",
     "LedgerEntry",
+    "LoopDetected",
+    "LoopDetector",
     "PricingTable",
+    "Scorer",
     "SpendTracker",
     "UnknownModelError",
     "__version__",
     "export_csv",
     "export_json",
+    "keyword_scorer",
+    "loop_to_budget_exceeded",
+    "nonempty_scorer",
     "summarize_by_tag",
 ]

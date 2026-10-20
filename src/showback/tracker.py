@@ -59,6 +59,26 @@ class SpendTracker:
         self.pricing = pricing if pricing is not None else PricingTable()
         self._entries: list[LedgerEntry] = []
         self._lock = threading.Lock()
+        self._tool_caps: dict[str, float] = {}
+
+    def set_tool_cap(self, tool_name: str, max_usd_per_call: float) -> None:
+        """Register a per-call USD cap ``b`` for a tool: every call must satisfy cost <= b.
+
+        Mirrors the BATS per-tool call caps (BATS, Liu et al.,
+        arXiv:2511.17006). :meth:`record_tool` raises :class:`BudgetExceeded`
+        for any single call whose cost exceeds the cap.
+        """
+        if not tool_name or not tool_name.strip():
+            raise ValueError("tool_name must be non-empty")
+        if max_usd_per_call < 0:
+            raise ValueError("max_usd_per_call must be non-negative")
+        with self._lock:
+            self._tool_caps[tool_name] = float(max_usd_per_call)
+
+    def clear_tool_cap(self, tool_name: str) -> None:
+        """Remove a per-call cap for a tool. No-op if no cap is registered."""
+        with self._lock:
+            self._tool_caps.pop(tool_name, None)
 
     def _append(self, entry: LedgerEntry) -> LedgerEntry:
         with self._lock:
@@ -107,9 +127,21 @@ class SpendTracker:
 
         Tool calls rarely have a standard token price, so the caller supplies
         the cost directly (e.g. a per-call fee, or an estimated token cost).
+
+        If a per-call cap was registered for ``name`` via :meth:`set_tool_cap`
+        and ``cost_usd`` exceeds it, raises :class:`BudgetExceeded` and records
+        nothing.
         """
+        # Local import: guard.py imports this module, so a top-level import
+        # here would be circular.
+        from showback.guard import BudgetExceeded
+
         if cost_usd < 0:
             raise ValueError("cost_usd must be non-negative")
+        with self._lock:
+            cap = self._tool_caps.get(name)
+        if cap is not None and cost_usd > cap:
+            raise BudgetExceeded(cap, cost_usd)
         return self._append(
             LedgerEntry(
                 id=uuid.uuid4().hex,

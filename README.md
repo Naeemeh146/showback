@@ -115,6 +115,74 @@ litellm.success_callback = [SpendGuardCallback(tracker, guard, tags={"agent": "r
 Every completed call is recorded with its real token usage; `guard.check()` runs after
 each one, so a multi-step loop aborts as soon as the cap is hit.
 
+## Paper-backed features
+
+Three techniques from the academic literature, implemented as small offline modules:
+
+### CascadeRouter — FrugalGPT cascades
+
+*FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving
+Performance* (Chen, Zaharia, Zou; arXiv:2305.05176, TMLR 2024): order models
+cheap → expensive, score each answer's reliability, and escalate only on low scores —
+reported up to 98% cost reduction at GPT-4 parity.
+
+```python
+from showback import BudgetGuard, CascadeRouter, SpendTracker, nonempty_scorer
+
+tracker = SpendTracker()
+guard = BudgetGuard(1.00, tracker)
+router = CascadeRouter(
+    [("gpt-4o-mini", nonempty_scorer, 0.7), ("gpt-4o", nonempty_scorer, 0.0)], tracker, guard
+)
+result = router.route("Summarize this report.", call_llm)  # cheap first; escalates on low score
+```
+
+`call_llm(model, prompt)` returns `(answer, in_tokens, out_tokens)`; every tier tried
+is recorded in the ledger, escalation aborts via `BudgetExceeded` instead of
+overspending, and the last tier is the fallback. Plug a real reliability classifier
+(e.g. a fine-tuned DistilBERT, as in the paper) as the scorer for production use.
+
+### LoopDetector — MAST failure monitors
+
+*MAST* (Cemri et al.; arXiv:2503.13657, NeurIPS 2025) found step repetition (~15.7%)
+and failure-to-terminate (~12.4%) dominate agent failures; the implementable primitive
+is a repetition detector over the action stream (see also Dubey, arXiv:2608.02464).
+
+```python
+from showback import BudgetGuard, LoopDetected, LoopDetector, SpendTracker, loop_to_budget_exceeded
+
+tracker = SpendTracker()
+guard, detector = (
+    BudgetGuard(1.00, tracker),
+    LoopDetector(),
+)  # raises LoopDetected on repeats/cycles
+try:
+    for tool, sig in agent_steps():
+        detector.observe(tool, sig)
+except LoopDetected as e:
+    raise loop_to_budget_exceeded(e, guard) from e  # abort via the budget path
+```
+
+Deterministic and offline — no model calls. ML-based telemetry (e.g. CUSUM drift
+detection) is roadmap, not v1.
+
+### Budget injection + per-tool caps — BATS
+
+*BATS: Budget-Aware Tool-Use Enables Effective Agent Scaling* (Liu et al.;
+arXiv:2511.17006): give the agent a continuous signal of remaining budget, enforce
+per-tool call caps, and keep the vocabulary straight — BUDGET is the hard upper
+limit, COST is realized spend.
+
+```python
+tracker = SpendTracker()
+tracker.set_tool_cap("web_search", 0.01)  # per-call cap b_i
+guard = BudgetGuard(0.50, tracker)
+prompt = task + "\n" + guard.budget_prompt_snippet()  # inject remaining budget each step
+```
+
+`record_tool` now refuses any single call over its cap (`BudgetExceeded`, nothing
+recorded), and `guard.spent_ratio` reports the fraction of budget consumed.
+
 ## Honest positioning
 
 | Tool | What it does | What it doesn't do |
