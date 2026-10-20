@@ -144,9 +144,11 @@ overspending, and the last tier is the fallback. Plug a real reliability classif
 
 ### LoopDetector — MAST failure monitors
 
-*MAST* (Cemri et al.; arXiv:2503.13657, NeurIPS 2025) found step repetition (~15.7%)
+*Why Do Multi-Agent LLM Systems Fail?* (MAST) (Cemri et al.; arXiv:2503.13657,
+NeurIPS 2025) found step repetition (~15.7%)
 and failure-to-terminate (~12.4%) dominate agent failures; the implementable primitive
-is a repetition detector over the action stream (see also Dubey, arXiv:2608.02464).
+is a repetition detector over the action stream (see also Dubey, *Real-Time
+Detection and Repair of LLM Agent Failures*, arXiv:2608.02464).
 
 ```python
 from showback import BudgetGuard, LoopDetected, LoopDetector, SpendTracker, loop_to_budget_exceeded

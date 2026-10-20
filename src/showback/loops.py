@@ -4,12 +4,13 @@ An infinite or uselessly repetitive agent loop burns money without progress, so
 it deserves a dedicated detector instead of being discovered when the budget
 finally runs out. This module provides the deterministic primitive:
 
-* Cemri et al., "MAST: Multi-Agent Systems Trajectories" (arXiv:2503.13657,
-  NeurIPS 2025) find that step repetition (~15.7% of failures) and
+* Cemri et al., "Why Do Multi-Agent LLM Systems Fail?" (MAST)
+  (arXiv:2503.13657, NeurIPS 2025) find that step repetition (~15.7% of failures) and
   failure-to-terminate (~12.4%) are the dominant agent failure modes. The
   implementable primitive from that finding is a *repetition detector* over the
   action stream — exactly what :class:`LoopDetector` is.
-* Dubey et al. (arXiv:2608.02464) advocate a deterministic verification layer
+* Dubey, "Real-Time Detection and Repair of LLM Agent Failures"
+  (arXiv:2608.02464) advocates a deterministic verification layer
   sitting beside the LLM. :class:`LoopDetector` is such a layer: no model
   calls, no network, pure state machine.
 
