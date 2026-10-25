@@ -46,13 +46,40 @@ task, team, or customer so the budget means something. That's this library.
 - **BudgetGuard** — context manager *and* decorator. Pre-flight check on entry, plus a
   `check()` method to call between agent steps that raises `BudgetExceeded` mid-run.
   Hard caps, not soft alerts. Guards can be scoped with `match_tags` so several tasks
-  share one ledger while each gets its own budget.
+  share one ledger while each gets its own budget. What happens at the cap is a
+  choice (`on_exceed`): `"stop"` (default), `"warn"`, or `"ask"` a human — see below.
 - **Attribution & export** — per-tag spend summaries for showback/chargeback, ledger
   export to JSON and CSV.
 - **Tool-call attribution** — record tool/MCP-style calls with explicit costs against the
   same budget and the same tags.
 - **LiteLLM integration** (optional extra) — drop-in `success_callback` that records
   every call and enforces the guard.
+
+## At the limit: stop, warn, or ask a human
+
+By default the guard stops the run at the cap. That stays the default — but
+`on_exceed` lets the caller choose, and `warn_at` adds an early warning at a
+fraction of the budget in any mode:
+
+```python
+# stop (default): raises BudgetExceeded at the cap — hard cap, run aborts
+guard = BudgetGuard(0.50, tracker)
+
+# warn: alert once at the cap (on_warn callback, or Python warnings) and continue;
+# every later dollar is still recorded in the ledger
+guard = BudgetGuard(0.50, tracker, on_exceed="warn", on_warn=lambda a: print(a.message))
+
+# ask: a human decides via on_ask — True continues (asked once), False aborts.
+# With no on_ask handler, "ask" behaves like "stop": never continue without a yes.
+guard = BudgetGuard(0.50, tracker, on_exceed="ask", on_ask=lambda a: input(a.message + " Continue? [y/N] ") == "y")
+
+# warn-then-stop: warn at 80% ($0.40), still stop at 100% ($0.50)
+guard = BudgetGuard(0.50, tracker, warn_at=0.8)
+```
+
+Every alert a guard fires is kept in `guard.alerts`, in order — so a run's
+report can show "warned at $0.40, approved to continue at $0.50, finished
+at $0.73" instead of just a final total.
 
 ## Install
 

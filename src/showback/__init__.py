@@ -15,17 +15,19 @@ from showback.cascade import (
     keyword_scorer,
     nonempty_scorer,
 )
-from showback.guard import BudgetExceeded, BudgetGuard
+from showback.guard import BudgetAlert, BudgetExceeded, BudgetGuard, BudgetWarning
 from showback.loops import LoopDetected, LoopDetector, loop_to_budget_exceeded
 from showback.pricing import DEFAULT_PRICES, PricingTable, UnknownModelError
 from showback.tracker import LedgerEntry, SpendTracker
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "DEFAULT_PRICES",
+    "BudgetAlert",
     "BudgetExceeded",
     "BudgetGuard",
+    "BudgetWarning",
     "CallFn",
     "CascadeResult",
     "CascadeRouter",
